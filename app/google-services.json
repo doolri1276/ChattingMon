@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "924803579802",
+    "firebase_url": "https://chattingmon.firebaseio.com",
+    "project_id": "chattingmon",
+    "storage_bucket": "chattingmon.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924803579802:android:8634a0e84ae07780",
+        "android_client_info": {
+          "package_name": "com.snownaul.chattingmon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "924803579802-b95c5atai1c7862soemn24oh7okhfmd4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.snownaul.chattingmon",
+            "certificate_hash": "f6f362a12505ac13a5d995e5348ff9195055e3b8"
+          }
+        },
+        {
+          "client_id": "924803579802-g6oahoncnghp37q4cos8gslf2hqo6nbd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvAwqXO4j6RVKpDSVsnW3LJ-HyQNkIGdc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "924803579802-g6oahoncnghp37q4cos8gslf2hqo6nbd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
