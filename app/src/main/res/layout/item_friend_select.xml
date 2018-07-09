@@ -11,6 +11,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_margin="10dp">
+
+        <CheckBox
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="10dp"
+            android:id="@+id/frienditem_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <ImageView
             android:id="@+id/frienditem_imageview"
             android:layout_width="50dp"

@@ -1,17 +1,17 @@
 package com.snownaul.chattingmon.fragment;
 
-
 import android.app.ActivityOptions;
-import android.app.Fragment;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,41 +24,42 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.snownaul.chattingmon.R;
 import com.snownaul.chattingmon.chat.MessageActivity;
+import com.snownaul.chattingmon.model.ChatModel;
 import com.snownaul.chattingmon.model.UserModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by alfo6-11 on 2018-07-02.
- */
+public class SelectFriendActivity extends AppCompatActivity {
 
-public class PeopleFragment extends Fragment{
+    ChatModel chatModel = new ChatModel();
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_people,container,false);
-        RecyclerView recyclerView=view.findViewById(R.id.peoplefragment_recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
-        recyclerView.setAdapter(new PeopleFragmentRecyclerViewAdapter());
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_select_friend);
 
-        FloatingActionButton floatingActionButton = view.findViewById(R.id.peoplefragment_floatingButton);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        RecyclerView recyclerView = findViewById(R.id.selectFriendActivity_recyclerview);
+        recyclerView.setAdapter(new SelectFriendRecyclerViewAdapter());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        Button button = findViewById(R.id.selectFriendActivity_button);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(v.getContext(),SelectFriendActivity.class));
+                String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                chatModel.users.put(myUid, true);
+
+                FirebaseDatabase.getInstance().getReference().child("chatrooms").push().setValue(ChatModel.class);
             }
         });
 
-        return view;
     }
 
-    class PeopleFragmentRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+    class SelectFriendRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         List<UserModel> userModels;
 
-        public PeopleFragmentRecyclerViewAdapter(){
+        public SelectFriendRecyclerViewAdapter(){
             userModels=new ArrayList<>();
             final String myUid= FirebaseAuth.getInstance().getCurrentUser().getUid();
             FirebaseDatabase.getInstance().getReference().child("users").addValueEventListener(new ValueEventListener() {
@@ -87,7 +88,7 @@ public class PeopleFragment extends Fragment{
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend, parent, false);
+            View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend_select, parent, false);
             return new CustomViewHolder(view);
         }
 
@@ -104,9 +105,9 @@ public class PeopleFragment extends Fragment{
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(getView().getContext(), MessageActivity.class);
+                    Intent intent=new Intent(v.getContext(), MessageActivity.class);
                     intent.putExtra("destinationUid",userModels.get(position).uid);
-                    ActivityOptions activityOptions= ActivityOptions.makeCustomAnimation(getView().getContext(),R.anim.fromright,R.anim.toleft);
+                    ActivityOptions activityOptions= ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.fromright,R.anim.toleft);
                     startActivity(intent,activityOptions.toBundle());
                 }
             });
@@ -114,6 +115,19 @@ public class PeopleFragment extends Fragment{
             if(userModels.get(position).comment!=null){
                 ((CustomViewHolder)holder).textView_comment.setText(userModels.get(position).comment);
             }
+
+            ((CustomViewHolder) holder).checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){//체크 된 상태임
+
+                        chatModel.users.put(userModels.get(position).uid, true);
+
+                    }else{//체크 취소 상태
+                        chatModel.users.remove(userModels.get(position));
+                    }
+                }
+            });
 
 
         }
@@ -127,12 +141,14 @@ public class PeopleFragment extends Fragment{
             public ImageView imageView;
             public TextView textView;
             public TextView textView_comment;
+            public CheckBox checkBox;
 
             public CustomViewHolder(View view) {
                 super(view);
                 imageView=view.findViewById(R.id.frienditem_imageview);
                 textView=view.findViewById(R.id.frienditem_textview);
                 textView_comment=view.findViewById(R.id.frienditem_textview_comment);
+                checkBox = view.findViewById(R.id.frienditem_checkbox);
 
             }
         }
