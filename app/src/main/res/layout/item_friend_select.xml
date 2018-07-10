@@ -17,6 +17,7 @@
             android:layout_marginRight="10dp"
             android:id="@+id/frienditem_checkbox"
             android:layout_width="wrap_content"
+            android:buttonTint="@color/colorOrange"
             android:layout_height="wrap_content" />
 
         <ImageView

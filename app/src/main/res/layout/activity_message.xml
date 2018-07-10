@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/colorBase"
+
         >
 
         <EditText
@@ -32,12 +33,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:textSize="@dimen/txt_text"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="@dimen/small_padding"
+            android:layout_marginLeft="@dimen/small_padding"
             android:layout_toLeftOf="@id/messageActivity_button" />
 
         <Button
             android:id="@+id/messageActivity_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorOrange"
+            android:textSize="@dimen/txt_text"
+            android:textStyle="bold"
+            android:textColor="@color/colorWhite"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:text="전송" />
     </RelativeLayout>

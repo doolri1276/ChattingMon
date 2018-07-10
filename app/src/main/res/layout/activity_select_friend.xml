@@ -18,6 +18,10 @@
     <Button
         android:id="@+id/selectFriendActivity_button"
         android:text="채팅방 만들기"
+        android:backgroundTint="@color/colorOrange"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold"
+        android:textSize="@dimen/txt_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

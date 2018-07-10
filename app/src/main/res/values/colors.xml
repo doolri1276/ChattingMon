@@ -19,8 +19,9 @@
 
     <color name="colorBase">#FAFAFA</color>
 
-    <color name="colorGreen">#31e042</color>
+    <color name="colorGreen">#39B54A</color>
     <color name="colorRed">#f43737</color>
     <color name="colorPink">#ff2973</color>
     <color name="colorYellow">#f7E26f</color>
+    <color name="colorOrange">#EF9F1D</color>
 </resources>

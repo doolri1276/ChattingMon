@@ -6,6 +6,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="현재 상태 메세지"
-        android:id="@+id/accountFragment_button_comment"/>
+        android:id="@+id/accountFragment_button_comment"
+        android:textSize="@dimen/txt_text"
+        android:textStyle="bold"
+        android:textColor="@color/colorWhite"
+        android:backgroundTint="@color/colorOrange"/>
 
 </LinearLayout>
