@@ -40,20 +40,12 @@ public class SplashActivity extends AppCompatActivity {
 
         mFirebaseRemoteConfig.setDefaults(R.xml.default_config);
 
-        // cacheExpirationSeconds is set to cacheExpiration here, indicating the next fetch request
-        // will use fetch data from the Remote Config service, rather than cached parameter values,
-        // if cached parameter values are more than cacheExpiration seconds old.
-        // See Best Practices in the README for more information.
         mFirebaseRemoteConfig.fetch(0)
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-//                            Toast.makeText(SplashActivity.this, "Fetch Succeeded",
-//                                    Toast.LENGTH_SHORT).show();
 
-                            // After config data is successfully fetched, it must be activated before newly fetched
-                            // values are returned.
                             mFirebaseRemoteConfig.activateFetched();
                         } else {
                             AlertDialog.Builder builder=new AlertDialog.Builder(SplashActivity.this);

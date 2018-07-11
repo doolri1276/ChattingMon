@@ -11,7 +11,7 @@
     android:padding="@dimen/normal_padding">
 
     <ImageView
-        android:src="@android:drawable/ic_menu_gallery"
+        android:src="@drawable/profilepic"
         android:id="@+id/signupactivity_imageview_profile"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content">
         <EditText
             android:id="@+id/signupactivity_edittext_password"
-            android:hint="패스워드"
+            android:hint="비밀번호"
             android:textSize="@dimen/txt_text"
             android:inputType="textPassword"
             android:layout_width="match_parent"
