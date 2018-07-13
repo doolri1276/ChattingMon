@@ -22,7 +22,7 @@
     <RelativeLayout
         android:id="@+id/messageActivity_relativelayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_alignParentBottom="true"
         android:background="@color/colorBase"
 

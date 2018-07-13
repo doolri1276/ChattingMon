@@ -49,7 +49,7 @@ public class SelectFriendActivity extends AppCompatActivity {
                 String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 chatModel.users.put(myUid, true);
 
-                FirebaseDatabase.getInstance().getReference().child("chatrooms").push().setValue(ChatModel.class);
+                FirebaseDatabase.getInstance().getReference().child("chatrooms").push().setValue(chatModel);
             }
         });
 

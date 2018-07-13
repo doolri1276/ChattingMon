@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
@@ -66,6 +67,9 @@ public class MessageActivity extends AppCompatActivity {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
 
     private UserModel destinationUserModel;
+    private DatabaseReference databaseReference;
+    private ValueEventListener valueEventListener;
+
     int peopleCount =0;
 
     @Override
@@ -204,7 +208,8 @@ public class MessageActivity extends AppCompatActivity {
 
         void getMessageList(){
             Log.i("MyTag","getMessageList()로 들어옴");
-            FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomUid).child("comments").addValueEventListener(new ValueEventListener() {
+            databaseReference=FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomUid).child("comments");
+            valueEventListener=new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     comments.clear();
@@ -229,7 +234,7 @@ public class MessageActivity extends AppCompatActivity {
                         Log.i("MyTag","data 추가함!!" + comment_modify.message);
                     }
 
-                    if(!comments.get(comments.size()-1).readUsers.containsKey(uid)){
+                    if(comments.size()!=0&&!comments.get(comments.size()-1).readUsers.containsKey(uid)){
                         FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomUid).child("comments")
                                 .updateChildren(readUsersMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -254,7 +259,7 @@ public class MessageActivity extends AppCompatActivity {
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
+            };
         }
 
         @Override
@@ -370,6 +375,10 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
+        if(valueEventListener!=null){
+            databaseReference.removeEventListener(valueEventListener);
+        }
+
         finish();
 
         overridePendingTransition(R.anim.fromleft,R.anim.toright);

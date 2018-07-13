@@ -131,25 +131,30 @@ public class ChatFragment extends Fragment {
             //메세지를 내림 차순으로 정렬 후 마지막 메세지의 키값을 가져옴.
             Map<String, ChatModel.Comment> commentMap=new TreeMap<>(Collections.reverseOrder());
             commentMap.putAll(chatModels.get(position).comments);
-            String lastMessageKey=(String) commentMap.keySet().toArray()[0];
-            customViewHolder.textView_last_message.setText(chatModels.get(position).comments.get(lastMessageKey).message);
+            if(commentMap.keySet().toArray().length>0) {
 
-            customViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), MessageActivity.class);
-                    intent.putExtra("destinationUid",destinationUsers.get(position));
 
-                    ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.fromright,R.anim.toleft);
-                    startActivity(intent,activityOptions.toBundle());
-                }
-            });
+                String lastMessageKey = (String) commentMap.keySet().toArray()[0];
+                customViewHolder.textView_last_message.setText(chatModels.get(position).comments.get(lastMessageKey).message);
 
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+                customViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(v.getContext(), MessageActivity.class);
+                        intent.putExtra("destinationUid", destinationUsers.get(position));
 
-            long unixTime = (long) chatModels.get(position).comments.get(lastMessageKey).timestamp;
-            Date date = new Date(unixTime);
-            customViewHolder.textView_timeStamp.setText(simpleDateFormat.format(date));
+                        ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(v.getContext(), R.anim.fromright, R.anim.toleft);
+                        startActivity(intent, activityOptions.toBundle());
+                    }
+                });
+
+                //TimeStamp
+                simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+                long unixTime = (long) chatModels.get(position).comments.get(lastMessageKey).timestamp;
+                Date date = new Date(unixTime);
+                customViewHolder.textView_timeStamp.setText(simpleDateFormat.format(date));
+
+            }
 
         }
 
