@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         firebaseRemoteConfig =FirebaseRemoteConfig.getInstance();
 
         firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.signOut();
+        //firebaseAuth.signOut();
 
         String splash_background = firebaseRemoteConfig.getString(getString(R.string.rc_color));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -99,6 +99,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 //로그인만 받아서 로그인 완료되었다고 알려주는 애.
                 if(!task.isSuccessful()){//로그인 실패한 경우
+                    Log.e("MyTag",task.getException().toString()+"");
                     Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }

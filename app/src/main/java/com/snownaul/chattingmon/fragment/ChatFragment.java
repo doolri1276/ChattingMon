@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.snownaul.chattingmon.R;
+import com.snownaul.chattingmon.chat.GroupMessageActivity;
 import com.snownaul.chattingmon.chat.MessageActivity;
 import com.snownaul.chattingmon.model.ChatModel;
 import com.snownaul.chattingmon.model.UserModel;
@@ -59,6 +61,7 @@ public class ChatFragment extends Fragment {
     class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         private List<ChatModel> chatModels = new ArrayList<>();
+        private List<String> keys=new ArrayList<>();
         private String uid;
         private ArrayList<String> destinationUsers=new ArrayList<>();
 
@@ -74,6 +77,7 @@ public class ChatFragment extends Fragment {
 
                     for(DataSnapshot item : dataSnapshot.getChildren()){
                         chatModels.add(item.getValue(ChatModel.class));
+                        keys.add(item.getKey());
                     }
 
                     notifyDataSetChanged();
@@ -100,33 +104,47 @@ public class ChatFragment extends Fragment {
             String destinationUid = null;
 
             //챗방에 있는 유저를 일일이 체크
+            Log.i("MyTag","새로운 챗방의 유저 수 : "+chatModels.get(position).users.size());
             for(String user : chatModels.get(position).users.keySet()){
+                final StringBuffer userName=new StringBuffer();
+
+                userName.append("");
                 if(!user.equals(uid)){//내가 아닌사람 뽑아옴
                     destinationUid=user;
+                    Log.i("MyTag","챗방에 있는유저 일일이 체크 position : "+position+", uid : "+destinationUid);
+
                     destinationUsers.add(destinationUid);
+
+
+                    FirebaseDatabase.getInstance().getReference().child("users").child(destinationUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            UserModel userModel=dataSnapshot.getValue(UserModel.class);
+
+                            Log.i("MyTag",position+"유저 이름!!!! "+userModel.userName);
+
+                            Glide.with(customViewHolder.itemView.getContext())
+                                    .load(userModel.profileImageUrl)
+                                    .apply(new RequestOptions().circleCrop())
+                                    .into(customViewHolder.imageView);
+
+                            if(!(userName.toString().length()==0))userName.append(", ");
+
+                            userName.append(userModel.userName);
+
+                            customViewHolder.textView_title.setText(userModel.userName);
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
                 }
 
             }
-
-            FirebaseDatabase.getInstance().getReference().child("users").child(destinationUid).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    UserModel userModel=dataSnapshot.getValue(UserModel.class);
-
-                    Glide.with(customViewHolder.itemView.getContext())
-                            .load(userModel.profileImageUrl)
-                            .apply(new RequestOptions().circleCrop())
-                            .into(customViewHolder.imageView);
-
-                    customViewHolder.textView_title.setText(userModel.userName);
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
 
             //메세지를 내림 차순으로 정렬 후 마지막 메세지의 키값을 가져옴.
             Map<String, ChatModel.Comment> commentMap=new TreeMap<>(Collections.reverseOrder());
@@ -137,24 +155,35 @@ public class ChatFragment extends Fragment {
                 String lastMessageKey = (String) commentMap.keySet().toArray()[0];
                 customViewHolder.textView_last_message.setText(chatModels.get(position).comments.get(lastMessageKey).message);
 
-                customViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(v.getContext(), MessageActivity.class);
-                        intent.putExtra("destinationUid", destinationUsers.get(position));
-
-                        ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(v.getContext(), R.anim.fromright, R.anim.toleft);
-                        startActivity(intent, activityOptions.toBundle());
-                    }
-                });
-
                 //TimeStamp
                 simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
                 long unixTime = (long) chatModels.get(position).comments.get(lastMessageKey).timestamp;
                 Date date = new Date(unixTime);
                 customViewHolder.textView_timeStamp.setText(simpleDateFormat.format(date));
 
+
             }
+
+            customViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i("MyTag","클릭되었다. "+keys.get(position)+", 유저수 : "+chatModels.get(position).users.size());
+                    Intent intent=null;
+                    if(chatModels.get(position).users.size()>2){
+                        Log.i("MyTag","들어간다 그룹챗으로..");
+                        intent = new Intent(v.getContext(), GroupMessageActivity.class);
+                        intent.putExtra("destinationRoom",keys.get(position));
+                    }else{
+                        Log.i("MyTag","개인챗 꼬우꼬우!");
+                        intent = new Intent(v.getContext(), MessageActivity.class);
+                        intent.putExtra("destinationUid", destinationUsers.get(position));
+                    }
+
+
+                    ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(v.getContext(), R.anim.fromright, R.anim.toleft);
+                    startActivity(intent, activityOptions.toBundle());
+                }
+            });
 
         }
 

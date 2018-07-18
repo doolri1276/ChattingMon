@@ -128,15 +128,21 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     void sendGcm(){
+        Log.i("MyTag","GCM ==================================================입장");
         Gson gson = new Gson();
 
         String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        Log.i("MyTag","GCM DisplayName : "+userName);
+
         NotificationModel notificationModel = new NotificationModel();
         notificationModel.to = destinationUserModel.pushToken;
         notificationModel.notification.title = userName;
         notificationModel.notification.text = editText.getText().toString();
         notificationModel.data.title = userName;
         notificationModel.data.text = editText.getText().toString();
+
+        Log.i("MyTag","GCM notification text"+notificationModel.notification.text);
+        Log.i("MyTag","GCM data text"+notificationModel.data.text);
 
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf8"),gson.toJson(notificationModel));
 
@@ -151,11 +157,13 @@ public class MessageActivity extends AppCompatActivity {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Log.e("MyTag","GCM Okhttp 에러낫다아아앙~! : "+e.toString());
 
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                Log.i("MyTag","GCM Okhttp response : "+response.toString());
 
             }
         });
@@ -166,9 +174,10 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot item:dataSnapshot.getChildren()){
+
                     ChatModel chatModel=item.getValue(ChatModel.class);
 
-                    if(chatModel.users.containsKey(destinationUid)){
+                    if(chatModel.users.containsKey(destinationUid)&&chatModel.users.size()==2){
                         chatRoomUid=item.getKey();
                         button.setEnabled(true);
                         recyclerView.setLayoutManager(new LinearLayoutManager(MessageActivity.this));
@@ -218,7 +227,9 @@ public class MessageActivity extends AppCompatActivity {
 
 
 
-                    Log.i("MyTag","data change한 곳으로 들어옴.");
+                    Log.i("MyTag","data change한 곳으로 들어옴. 갯수 : "+dataSnapshot.getChildrenCount());
+
+
 
                     for(DataSnapshot item : dataSnapshot.getChildren()){
 
@@ -260,6 +271,8 @@ public class MessageActivity extends AppCompatActivity {
 
                 }
             };
+
+            databaseReference.addValueEventListener(valueEventListener);
         }
 
         @Override
